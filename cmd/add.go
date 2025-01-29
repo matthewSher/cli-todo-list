@@ -1,8 +1,8 @@
 package cmd
 
 import (
-	"cli-todo-list/pkg/task"
-	"cli-todo-list/storage/local"
+	"cli-todo-list/internal/storage/local"
+	"cli-todo-list/internal/task"
 	"fmt"
 
 	"github.com/spf13/cobra"
