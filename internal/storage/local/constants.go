@@ -1,3 +1,5 @@
 package local
 
-const TableFileName = "todolist.csv"
+const TableFilename = "todolist.csv"
+
+var TableTitles = []string{"Description", "Completion"}

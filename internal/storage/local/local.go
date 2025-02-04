@@ -8,81 +8,43 @@ import (
 	"strconv"
 )
 
-type CSVTable struct {
-	file   *os.File
-	writer *csv.Writer
-	reader *csv.Reader
-}
+func InitCSVFile(filepath string) error {
+	_, err := os.Stat(filepath)
 
-var Table *CSVTable
+	if os.IsNotExist(err) {
+		file, err := os.Create(filepath)
 
-func InitTable() {
-	if Table == nil {
-		table, err := createCSVTable()
 		if err != nil {
-			fmt.Println("Failed to initialize file of CSV table")
-			return
+			return fmt.Errorf("%w: %v", ErrCreateFile, err)
 		}
-		Table = table
+		defer file.Close()
+
+		writer := csv.NewWriter(file)
+		defer writer.Flush()
+
+		if err := writer.Write(TableTitles); err != nil {
+			return fmt.Errorf("%w: %v", ErrWriteData, err)
+		}
 	}
+
+	return nil
 }
 
-func createCSVTable() (*CSVTable, error) {
-	csvFile, err := createCSVFile()
+func AddElement(filepath string, task task.Task) error {
+	file, err := os.OpenFile(filepath, os.O_APPEND|os.O_WRONLY, 0644)
 	if err != nil {
-		fmt.Printf("Failed to create %s file\n", TableFileName)
-		return nil, err
+		return fmt.Errorf("%w: %v", ErrOpenFile, err)
+	}
+	defer file.Close()
+
+	writer := csv.NewWriter(file)
+	defer writer.Flush()
+
+	data := []string{task.Description, strconv.FormatBool(task.IsCompleted)}
+
+	if err := writer.Write(data); err != nil {
+		return fmt.Errorf("%w: %v", ErrWriteData, err)
 	}
 
-	csvWriter := csv.NewWriter(csvFile)
-	csvReader := csv.NewReader(csvFile)
-
-	// Writing table titles into the csvFile
-	tableTitles := []string{"ID", "Description", "Completion"}
-
-	if err := csvWriter.Write(tableTitles); err != nil {
-		fmt.Println(ErrWriteData.Error())
-		return nil, err
-	}
-
-	csvTable := CSVTable{
-		file:   csvFile,
-		writer: csvWriter,
-		reader: csvReader,
-	}
-
-	return &csvTable, nil
-}
-
-func createCSVFile() (*os.File, error) {
-	csvFile, err := os.Create(TableFileName)
-	if err != nil {
-		fmt.Println(ErrWriteData.Error())
-		return nil, err
-	}
-
-	return csvFile, nil
-}
-
-func (t *CSVTable) AddElement(task task.Task) {
-	data := []string{strconv.Itoa(task.Id), task.Description, strconv.FormatBool(task.IsCompleted)}
-
-	if err := t.writer.Write(data); err != nil {
-		fmt.Println(ErrWriteData.Error())
-		return
-	}
-}
-
-func (t *CSVTable) DefineIdForTask() (int, error) {
-	elements, err := t.reader.ReadAll()
-	if err != nil {
-		fmt.Println(ErrReadData.Error())
-		return 0, err
-	}
-
-	tableLen := len(elements)
-	if tableLen > 1 {
-		return tableLen + 1, nil
-	}
-	return 1, nil
+	return nil
 }

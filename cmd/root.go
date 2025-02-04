@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"cli-todo-list/internal/storage/local"
 	"fmt"
 	"os"
 
@@ -14,6 +15,7 @@ var rootCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("Welcome to simple todo-list!")
 		fmt.Println("Type --help or -h to get help.")
+		local.InitCSVFile(local.TableFilename)
 	},
 }
 

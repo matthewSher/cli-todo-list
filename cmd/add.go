@@ -20,19 +20,15 @@ var addCmd = &cobra.Command{
 	Args: cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		// Create CSV table file if it isn't exist
-		local.InitTable()
+		local.InitCSVFile(local.TableFilename)
 
-		taskId, err := local.Table.DefineIdForTask()
-		if err != nil {
-			fmt.Println(local.ErrReadData)
-			return
-		}
-
-		local.Table.AddElement(task.Task{
-			Id:          taskId,
+		err := local.AddElement(local.TableFilename, task.Task{
 			Description: args[0],
 			IsCompleted: isCompleted,
 		})
+		if err != nil {
+			fmt.Println("error:", err)
+		}
 	},
 }
 

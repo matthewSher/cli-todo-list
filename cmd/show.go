@@ -1,6 +1,8 @@
 package cmd
 
 import (
+	"cli-todo-list/internal/storage/local"
+	"cli-todo-list/internal/table"
 	"fmt"
 
 	"github.com/spf13/cobra"
@@ -12,7 +14,11 @@ var showCmd = &cobra.Command{
 	Short: "Show list",
 	Long:  `Use this command to print list of your tasks.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("show called")
+		// local.InitCSVFile(local.TableFilename)
+		err := table.RenderFromCSV(local.TableFilename)
+		if err != nil {
+			fmt.Println("error:", err)
+		}
 	},
 }
 

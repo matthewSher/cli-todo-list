@@ -1,11 +1,11 @@
 package local
 
-import (
-	"fmt"
-)
+import "errors"
 
 var (
-	ErrWriteData  = fmt.Errorf("failed to write data into %s", TableFileName)
-	ErrReadData   = fmt.Errorf("failed to read data from %s", TableFileName)
-	ErrAddElement = fmt.Errorf("failed to add new element")
+	ErrWriteData  = errors.New("failed to write data into file")
+	ErrReadData   = errors.New("failed to read data from file")
+	ErrAddElement = errors.New("failed to add new element")
+	ErrCreateFile = errors.New("failed to create file")
+	ErrOpenFile   = errors.New("failed to open file")
 )
