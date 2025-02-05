@@ -8,4 +8,5 @@ var (
 	ErrAddElement = errors.New("failed to add new element")
 	ErrCreateFile = errors.New("failed to create file")
 	ErrOpenFile   = errors.New("failed to open file")
+	ErrOutOfRange = errors.New("index value out of range")
 )
